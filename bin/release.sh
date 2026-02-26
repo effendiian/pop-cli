@@ -1,12 +1,64 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ $# -ne 1 ]; then
-    echo "Usage: ./bin/release.sh <major|minor|patch>"
-    exit 1
+# ---------------------------------------------
+# Configuration
+# ---------------------------------------------
+DEFAULT_INITIAL_VERSION="0.1.0"
+DRY_RUN=false
+BUMP_TYPE=""
+CI_REQUIRED=true
+
+# ---------------------------------------------
+# Argument Parsing
+# ---------------------------------------------
+usage() {
+  echo "Usage: $0 <major|minor|patch> [--dry-run]"
+  exit 1
+}
+
+if [ $# -lt 1 ]; then
+  usage
 fi
 
-BUMP_TYPE=$1
+BUMP_TYPE="$1"
+shift
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dry-run)
+      DRY_RUN=true
+      ;;
+    *)
+      echo "Unknown option: $1"
+      usage
+      ;;
+  esac
+  shift
+done
+
+if [[ "$BUMP_TYPE" != "major" && "$BUMP_TYPE" != "minor" && "$BUMP_TYPE" != "patch" ]]; then
+  echo "Invalid bump type: $BUMP_TYPE"
+  exit 1
+fi
+
+# ---------------------------------------------
+# Enforce CI-only execution
+# ---------------------------------------------
+if [[ "$CI_REQUIRED" = true ]]; then
+  if [[ -z "${CI:-}" ]]; then
+    echo "❌ Releases must run in CI."
+    exit 1
+  fi
+fi
+
+# ---------------------------------------------
+# Ensure clean working tree
+# ---------------------------------------------
+if ! git diff-index --quiet HEAD --; then
+  echo "❌ Working tree is dirty."
+  exit 1
+fi
 
 # ----------------------------------------
 # Determine current version (if any)
@@ -31,7 +83,7 @@ fi
 # ----------------------------------------
 
 if [ "$FIRST_RELEASE" = true ]; then
-  NEW_VERSION="0.1.0"
+  NEW_VERSION="$DEFAULT_INITIAL_VERSION"
   echo "No existing tags found. Initial release will be $NEW_VERSION"
 else
   IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
@@ -58,34 +110,46 @@ else
   NEW_VERSION="$MAJOR.$MINOR.$PATCH"
 fi
 
-# ----------------------------------------
-# Prevent double-tagging.
-# ----------------------------------------
-
+# ---------------------------------------------
+# Idempotency check: tag already exists?
+# ---------------------------------------------
 if git rev-parse "$NEW_VERSION" >/dev/null 2>&1; then
-  echo "Tag $NEW_VERSION already exists."
-  exit 1
+  echo "✔ Tag $NEW_VERSION already exists. Nothing to do."
+  exit 0
 fi
 
 echo "Releasing $NEW_VERSION"
 
-# ----------------------------------------
-# Build changelog
-# ----------------------------------------
-
-towncrier build --yes --version "$NEW_VERSION"
+# ---------------------------------------------
+# Build changelog safely
+# ---------------------------------------------
+if [ "$DRY_RUN" = true ]; then
+  echo "[DRY RUN] Would build changelog for $NEW_VERSION"
+  towncrier build --draft --version "$NEW_VERSION"
+else
+  towncrier build --yes --version "$NEW_VERSION"
+fi
 
 # ----------------------------------------
 # Commit + tag
 # ----------------------------------------
+if [ "$DRY_RUN" = true ]; then
+  echo "[DRY RUN] Would commit and tag $NEW_VERSION"
+  exit 0
+fi
 
 git add -A
 
-git commit -m "chore(release): $NEW_VERSION"
+if git diff --cached --quiet; then
+  echo "⚠ No changes to commit (likely no fragments)."
+else
+  git commit -m "chore(release): $NEW_VERSION"
+fi
 
 git tag "$NEW_VERSION"
 
-git push origin main
-git push origin "$NEW_VERSION"
+# Release workflow will push the tag.
+# git push origin main
+# git push origin "$NEW_VERSION"
 
-echo "Release v$NEW_VERSION created and pushed to origin."
+echo "✔ Release $NEW_VERSION prepared successfully."

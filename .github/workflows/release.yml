@@ -1,8 +1,17 @@
 name: Release
 
 on:
-    push:
-        tags: [ "*.*.*" ]
+    workflow_dispatch:
+        inputs:
+            bump:
+                description: "Version bump type (patch, minor, major)"
+                required: true
+                default: "patch"
+                type: choice
+                options:
+                    - major
+                    - minor
+                    - patch
 
 jobs:
     release:
@@ -11,6 +20,8 @@ jobs:
         permissions:
             contents: write
             id-token: write
+
+        if: github.ref == 'refs/heads/main'
 
         steps:
             - uses: actions/checkout@v4
@@ -23,7 +34,18 @@ jobs:
 
             - run: uv sync --dev
 
-            - run: towncrier build --yes
+            - name: Run Release Script
+              env:
+                CI: true
+              run: |
+                # Make the release script executable
+                chmod +x bin/release.sh
+                bin/release.sh ${{ github.event.inputs.bump }}
+
+            - name: Push Release Tag
+              run: |
+                git push origin main
+                git push origin --tags
 
             - run: python -m build
 
