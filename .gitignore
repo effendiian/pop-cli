@@ -207,6 +207,9 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+# setuptools-scm version file
+src/*/_version.py
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
