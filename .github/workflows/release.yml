@@ -33,6 +33,11 @@ jobs:
               with:
                   python-version: "3.14"
 
+            - name: Prepare environment
+              run: |
+                  mkdir -p src/pop_cli
+                  touch src/pop_cli/_version.py
+
             - run: uv sync --dev
 
             - name: Run Release Script
