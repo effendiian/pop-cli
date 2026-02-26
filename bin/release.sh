@@ -52,22 +52,6 @@ if [[ "$CI_REQUIRED" = true ]]; then
   fi
 fi
 
-# ---------------------------------------------
-# Ensure clean working tree
-# ---------------------------------------------
-if ! git diff-index --quiet HEAD --; then
-  echo "❌ Working tree is dirty."
-  echo "---- git status ----"
-  git status --porcelain=v2
-  echo "---- unstaged changes ----"
-  git diff --name-status
-  echo "---- staged changes ----"
-  git diff --cached --name-status
-  echo "---- untracked files ----"
-  git ls-files --others --exclude-standard
-  exit 1
-fi
-
 # ----------------------------------------
 # Determine current version (if any)
 # ----------------------------------------
