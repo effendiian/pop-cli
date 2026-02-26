@@ -19,6 +19,6 @@ jobs:
 
             - run: uv sync --dev
 
-            - run: pre-commit run --all-files
+            - run: uv run pre-commit run --all-files --show-diff-on-failure
 
-            - run: pytest
+            - run: uv run pytest
