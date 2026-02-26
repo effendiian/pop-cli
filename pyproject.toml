@@ -46,6 +46,7 @@ write_to = "src/pop_cli/_version.py"
 line-length = 100
 target-version = "py311"
 src = ["src", "tests"]
+exclude = ["src/pop_cli/_version.py"]
 
 [tool.ruff.lint]
 select = [
