@@ -46,7 +46,7 @@ jobs:
               run: |
                 # Make the release script executable
                 chmod +x bin/release.sh
-                bin/release.sh ${{ github.event.inputs.bump }}
+                uv run bash bin/release.sh ${{ github.event.inputs.bump }}
 
             - name: Push Release Tag
               run: |
