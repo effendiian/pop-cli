@@ -504,6 +504,7 @@ wheels = [
 
 [[package]]
 name = "pop-cli"
+version = "0.0.0"
 source = { editable = "." }
 
 [package.dev-dependencies]

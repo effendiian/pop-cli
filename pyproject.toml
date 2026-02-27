@@ -10,7 +10,7 @@ build-backend = "uv_build"
 # -------------------------
 [project]
 name = "pop-cli"
-dynamic = ["version"]
+version = "0.0.0" # To be replaced during runtime and build-time via CI/CD.
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
@@ -19,7 +19,7 @@ authors = [{ name = "Ian Effendi", email = "effendiian@gmail.com" }]
 dependencies = []
 
 [project.scripts]
-pop-cli = "pop_cli:main"
+pop-cli = "pop_cli.main:main"
 
 # -------------------------
 # Optional dependencies
