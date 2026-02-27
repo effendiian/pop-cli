@@ -18,6 +18,9 @@ license = { text = "MIT" }
 authors = [{ name = "Ian Effendi", email = "effendiian@gmail.com" }]
 dependencies = []
 
+[project.scripts]
+pop-cli = "pop_cli:main"
+
 # -------------------------
 # Optional dependencies
 # -------------------------
