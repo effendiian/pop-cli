@@ -1,1 +1,1 @@
-Fix function typehints in main.py
+Fixed function typehints in main.py.

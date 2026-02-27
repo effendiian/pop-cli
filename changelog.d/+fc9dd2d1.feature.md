@@ -1,1 +1,1 @@
-Initialize the `pop_cli` package.
+Initialized the `pop_cli` package.
