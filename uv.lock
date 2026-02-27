@@ -518,6 +518,19 @@ dev = [
     { name = "towncrier" },
     { name = "twine" },
 ]
+lint = [
+    { name = "mypy" },
+    { name = "ruff" },
+]
+release = [
+    { name = "setuptools-scm" },
+    { name = "towncrier" },
+    { name = "twine" },
+]
+test = [
+    { name = "coverage" },
+    { name = "pytest" },
+]
 
 [package.metadata]
 
@@ -531,6 +544,19 @@ dev = [
     { name = "setuptools-scm", specifier = ">=9.2.2" },
     { name = "towncrier", specifier = ">=25.8.0" },
     { name = "twine", specifier = ">=6.2.0" },
+]
+lint = [
+    { name = "mypy", specifier = ">=1.19.1" },
+    { name = "ruff", specifier = ">=0.15.2" },
+]
+release = [
+    { name = "setuptools-scm", specifier = ">=9.2.2" },
+    { name = "towncrier", specifier = ">=25.8.0" },
+    { name = "twine", specifier = ">=6.2.0" },
+]
+test = [
+    { name = "coverage", specifier = ">=7.13.4" },
+    { name = "pytest", specifier = ">=9.0.2" },
 ]
 
 [[package]]
