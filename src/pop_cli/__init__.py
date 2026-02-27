@@ -2,8 +2,11 @@
 
 import importlib.metadata
 
-# This __all__ variable is used to specify which attributes of the module should be exported when using 'from pop_cli import *'.
-__all__ = ["__version__"]
+from .main import main
+
+# This __all__ variable is used to specify which attributes of the
+# module should be exported when using 'from pop_cli import *'.
+__all__ = ["__version__", "main"]
 
 try:
     # Get the version from the installed package metadata
